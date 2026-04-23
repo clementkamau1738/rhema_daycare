@@ -1,0 +1,42 @@
+{% extends "templates/web.html" %}
+{% block title %}Parent Portal — Rhema Daycare{% endblock %}
+{% block page_content %}
+<div class="container mt-4">
+  <div class="mb-4">
+    <h2>Welcome, {{ guardian_name }}</h2>
+    <p class="text-muted">Your children dashboard at Rhema Daycare</p>
+  </div>
+  {% if error %}
+  <div class="alert alert-warning">{{ error }}</div>
+  {% endif %}
+  {% if not children %}
+  <div class="alert alert-info">No active children found. Please contact the administrator.</div>
+  {% endif %}
+  <div class="row">
+    {% for child in children %}
+    <div class="col-md-6 mb-4">
+      <div class="card shadow-sm">
+        <div class="card-header" style="background-color:#4e73df; color:white;">
+          <h5 class="mb-0">{{ child.full_name }}</h5>
+        </div>
+        <div class="card-body">
+          <p><strong>Status:</strong> {{ child.status }}</p>
+          <p><strong>Classroom:</strong> {{ child.assigned_classroom or "Not Assigned" }}</p>
+          <hr>
+          <h6>Today Attendance</h6>
+          {% if child.today_attendance %}
+          <p><strong>Check In:</strong> {{ child.today_attendance.check_in or "N/A" }}</p>
+          <p><strong>Check Out:</strong> {{ child.today_attendance.check_out or "Not yet" }}</p>
+          {% else %}
+          <p class="text-muted">No attendance record for today.</p>
+          {% endif %}
+        </div>
+        <div class="card-footer">
+          <a href="/child/{{ child.name }}" class="btn btn-sm btn-outline-primary">View Full Report</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends "templates/web.html" %}
+{% block title %}{{ child.full_name }} — Rhema Daycare{% endblock %}
+{% block page_content %}
+<div class="container mt-4">
+
+  <a href="/parent-portal" class="btn btn-sm btn-secondary mb-3">
+    Back to Portal
+  </a>
+
+  <div class="card shadow-sm mb-4">
+    <div class="card-header" style="background-color:#4e73df; color:white;">
+      <h4 class="mb-0">{{ child.full_name }}</h4>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6">
+          <p><strong>Status:</strong> {{ child.status }}</p>
+          <p><strong>Date of Birth:</strong> {{ child.date_of_birth }}</p>
+          <p><strong>Gender:</strong> {{ child.gender }}</p>
+        </div>
+        <div class="col-md-6">
+          <p><strong>Classroom:</strong> {{ child.assigned_classroom or "Not Assigned" }}</p>
+          <p><strong>Guardian:</strong> {{ child.guardian }}</p>
+          <p><strong>Workflow State:</strong> {{ child.workflow_state }}</p>
+        </div>
+      </div>
+      {% if child.medical_conditions %}
+      <hr>
+      <p><strong>Medical Conditions:</strong> {{ child.medical_conditions }}</p>
+      {% endif %}
+      {% if child.allergies %}
+      <p><strong>Allergies:</strong> {{ child.allergies }}</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <h5>Recent Attendance</h5>
+  {% if attendance_logs %}
+  <table class="table table-bordered table-sm">
+    <thead class="thead-light">
+      <tr>
+        <th>Check In</th>
+        <th>Check Out</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for log in attendance_logs %}
+      <tr>
+        <td>{{ log.check_in }}</td>
+        <td>{{ log.check_out or "Not yet" }}</td>
+        <td>{{ log.status }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="text-muted">No attendance records found.</p>
+  {% endif %}
+
+</div>
+{% endblock %}

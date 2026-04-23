@@ -1,0 +1,18 @@
+{
+  "doctype": "Report",
+  "name": "Enrollment Trends",
+  "report_name": "Enrollment Trends",
+  "report_type": "Script Report",
+  "ref_doctype": "Child Profile",
+  "is_standard": "Yes",
+  "module": "Rhema Daycare",
+  "roles": [
+    {
+      "role": "Daycare Manager"
+    },
+    {
+      "role": "System Manager"
+    }
+  ],
+  "report_script": "def execute(filters=None):\n    if not filters:\n        filters = {}\n    if not filters.get('from_date'):\n        filters['from_date'] = frappe.utils.add_months(frappe.utils.today(), -12)\n    if not filters.get('to_date'):\n        filters['to_date'] = frappe.utils.today()\n    columns = [\n        {'label': 'Month', 'fieldname': 'month', 'fieldtype': 'Data', 'width': 120},\n        {'label': 'New Enrollments', 'fieldname': 'new', 'fieldtype': 'Int', 'width': 140},\n        {'label': 'Active', 'fieldname': 'active', 'fieldtype': 'Int', 'width': 120},\n        {'label': 'Inactive', 'fieldname': 'inactive', 'fieldtype': 'Int', 'width': 120},\n        {'label': 'Graduated', 'fieldname': 'graduated', 'fieldtype': 'Int', 'width': 120}\n    ]\n    data = frappe.db.sql(\n        'SELECT DATE_FORMAT(creation, \\'%%Y-%%m\\') as month,'\n        ' COUNT(*) as new,'\n        ' SUM(CASE WHEN status = \\'Active\\' THEN 1 ELSE 0 END) as active,'\n        ' SUM(CASE WHEN status = \\'Inactive\\' THEN 1 ELSE 0 END) as inactive,'\n        ' SUM(CASE WHEN status = \\'Graduated\\' THEN 1 ELSE 0 END) as graduated'\n        ' FROM `tabChild Profile`'\n        ' WHERE creation BETWEEN %(from_date)s AND %(to_date)s'\n        ' GROUP BY month ORDER BY month DESC',\n        filters, as_dict=True)\n    return columns, data\n"
+}

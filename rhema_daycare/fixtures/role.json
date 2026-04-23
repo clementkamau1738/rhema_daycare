@@ -1,0 +1,23 @@
+[
+  {
+    "doctype": "Role",
+    "name": "Daycare Manager",
+    "role_name": "Daycare Manager",
+    "desk_access": 1,
+    "is_custom": 1
+  },
+  {
+    "doctype": "Role",
+    "name": "Teacher",
+    "role_name": "Teacher",
+    "desk_access": 1,
+    "is_custom": 1
+  },
+  {
+    "doctype": "Role",
+    "name": "Parent Portal User",
+    "role_name": "Parent Portal User",
+    "desk_access": 0,
+    "is_custom": 1
+  }
+]

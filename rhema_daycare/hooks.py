@@ -247,3 +247,28 @@ app_license = "mit"
 # List of apps whose translatable strings should be excluded from this app's translations.
 # ignore_translatable_strings_from = []
 
+# Fixtures
+fixtures = [
+    {
+        "doctype": "Salary Component",
+        "filters": [
+            ["salary_component", "in", [
+                "Basic Salary",
+                "Transport Allowance",
+                "Meal Allowance",
+                "PAYE",
+                "NSSF",
+                "Housing Levy"
+            ]]
+        ]
+    }
+]
+
+website_route_rules = [
+    {"from_route": "/parent-portal", "to_route": "parent_portal"},
+    {"from_route": "/child/<name>", "to_route": "child_profile"}
+]
+
+has_website_permission = {
+    "Child Profile": "rhema_daycare.portal.has_website_permission"
+}
