@@ -288,3 +288,78 @@ def _notify_parent_checkin(child):
             f"Email failed for {child.full_name}: {str(e)}",
             "Email Error"
         )
+
+
+@frappe.whitelist()
+def get_today_log():
+    """Get all attendance logs for today"""
+    if frappe.session.user == "Guest":
+        frappe.throw("Authentication required.", frappe.AuthenticationError)
+
+    logs = frappe.db.sql("""
+        SELECT
+            cal.name,
+            cal.child,
+            cp.full_name as child_name,
+            cal.check_in,
+            cal.check_out,
+            cal.status
+        FROM `tabChild Attendance Log` cal
+        LEFT JOIN `tabChild Profile` cp ON cal.child = cp.name
+        WHERE DATE(cal.check_in) = CURDATE()
+        ORDER BY cal.check_in DESC
+    """, as_dict=True)
+
+    return logs
+
+
+@frappe.whitelist()
+def simulate_late_pickup(child_id):
+    """Simulate a late pickup alert for testing"""
+    if frappe.session.user == "Guest":
+        frappe.throw("Authentication required.", frappe.AuthenticationError)
+
+    child_id = str(child_id).strip()
+
+    if not frappe.db.exists("Child Profile", child_id):
+        frappe.throw(f"Child '{child_id}' not found.")
+
+    child = frappe.get_doc("Child Profile", child_id)
+
+    if not child.guardian:
+        frappe.throw(f"{child.full_name} has no guardian assigned.")
+
+    guardian = frappe.get_doc("Customer", child.guardian)
+
+    if not guardian.email_id:
+        frappe.throw(f"Guardian has no email address.")
+
+    late_fee_per_hour = float(frappe.db.get_single_value(
+        "Rhema Daycare Settings", "late_fee_per_hour"
+    ) or 200)
+
+    estimated_fee = late_fee_per_hour * 1
+
+    try:
+        frappe.sendmail(
+            recipients=[guardian.email_id],
+            subject=f"⚠️ Late Pickup Alert — {child.full_name} | Rhema Daycare",
+            message=f"""
+                <p>Dear {guardian.customer_name},</p>
+                <p><strong>{child.full_name}</strong> is still at
+                Rhema Daycare past the 5:30 PM pickup time.</p>
+                <p><strong>Estimated late fee:</strong>
+                KES {estimated_fee:,.0f}/hour</p>
+                <p>Please arrange for immediate pickup.</p>
+                <p><strong>Rhema Daycare Team</strong></p>
+            """,
+            now=True
+        )
+    except Exception as e:
+        frappe.log_error(str(e), "Late Pickup Simulation Error")
+
+    return {
+        "status": "success",
+        "child": child.full_name,
+        "estimated_fee": estimated_fee
+    }

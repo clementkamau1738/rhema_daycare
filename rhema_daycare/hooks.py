@@ -26,6 +26,9 @@ scheduler_events = {
     "daily": [
         "rhema_daycare.rhema_daycare.billing.send_payment_reminders",
         "rhema_daycare.rhema_daycare.attendance.send_daily_summary"
+    ],
+    "hourly": [
+        "rhema_daycare.rhema_daycare.billing.calculate_late_pickup_fees"
     ]
 }
 
@@ -35,8 +38,13 @@ fixtures = [
         "doctype": "Salary Component",
         "filters": [
             ["salary_component", "in", [
-                "Basic Salary", "Transport Allowance", "Meal Allowance",
-                "PAYE", "NSSF", "Housing Levy"
+                "Basic Salary",
+                "Transport Allowance",
+                "Meal Allowance",
+                "PAYE",
+                "NHIF",
+                "NSSF",
+                "Housing Levy"
             ]]
         ]
     },
@@ -47,7 +55,9 @@ fixtures = [
     {
         "doctype": "Role",
         "filters": [["role_name", "in", [
-            "Daycare Manager", "Teacher", "Parent Portal User"
+            "Daycare Manager",
+            "Teacher",
+            "Parent Portal User"
         ]]]
     },
     {
@@ -59,7 +69,8 @@ fixtures = [
 # Website Route Rules
 website_route_rules = [
     {"from_route": "/parent-portal", "to_route": "parent_portal"},
-    {"from_route": "/child/<name>", "to_route": "child_profile"}
+    {"from_route": "/child/<name>", "to_route": "child_profile"},
+    {"from_route": "/qr-scanner", "to_route": "qr_scanner"}
 ]
 
 # Website Permissions
