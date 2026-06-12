@@ -1,0 +1,45 @@
+{% extends "templates/web.html" %}
+{% block title %}{{ child.full_name }} — Rhema Daycare{% endblock %}
+
+{% block page_content %}
+<div class="container mt-4">
+  <a href="/parent-portal" class="btn btn-sm btn-secondary mb-3">
+    ← Back to portal
+  </a>
+
+  <h2>{{ child.full_name }}</h2>
+  <p class="text-muted">{{ child.assigned_classroom }} · {{ child.status }}</p>
+
+  <!-- Today's attendance -->
+  <div class="card mb-3">
+    <div class="card-body">
+      <h5 class="card-title">Today's attendance</h5>
+      {% if attendance_today %}
+        <p>Check-in: <strong>{{ attendance_today.check_in }}</strong></p>
+        {% if attendance_today.check_out %}
+          <p>Check-out: <strong>{{ attendance_today.check_out }}</strong></p>
+        {% else %}
+          <p class="text-success">Currently at school</p>
+        {% endif %}
+      {% else %}
+        <p class="text-muted">No check-in recorded today</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Outstanding invoices -->
+  {% if invoices %}
+  <div class="card mb-3">
+    <div class="card-body">
+      <h5 class="card-title">Outstanding invoices</h5>
+      {% for inv in invoices %}
+      <div class="d-flex justify-content-between mb-2">
+        <span>{{ inv.name }} · Due {{ inv.due_date }}</span>
+        <strong>KES {{ inv.outstanding_amount }}</strong>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
