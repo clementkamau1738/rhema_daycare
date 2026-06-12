@@ -33,37 +33,48 @@ scheduler_events = {
 }
 
 # Fixtures
+# hooks.py
 fixtures = [
-    {
-        "doctype": "Salary Component",
-        "filters": [
-            ["salary_component", "in", [
-                "Basic Salary",
-                "Transport Allowance",
-                "Meal Allowance",
-                "PAYE",
-                "NHIF",
-                "NSSF",
-                "Housing Levy"
-            ]]
-        ]
-    },
-    {
-        "doctype": "Workflow",
-        "filters": [["name", "in", ["Child Enrollment Approval"]]]
-    },
-    {
-        "doctype": "Role",
-        "filters": [["role_name", "in", [
+    # Export ALL your custom DocType definitions
+    {"dt": "DocType", "filters": [
+        ["module", "=", "Rhema Daycare"]
+    ]},
+
+    # Export roles
+    {"dt": "Role", "filters": [
+        ["role_name", "in", [
             "Daycare Manager",
             "Teacher",
             "Parent Portal User"
-        ]]]
-    },
-    {
-        "doctype": "Currency",
-        "filters": [["name", "in", ["KES"]]]
-    }
+        ]]
+    ]},
+
+    # Export salary components
+    {"dt": "Salary Component", "filters": [
+        ["name", "in", [
+            "Basic Salary",
+            "Transport Allowance",
+            "Meal Allowance",
+            "PAYE",
+            "NHIF",
+            "NSSF"
+        ]]
+    ]},
+
+    # Export the enrollment workflow
+    {"dt": "Workflow", "filters": [
+        ["document_type", "=", "Child Profile"]
+    ]},
+
+    # Export custom fields added to standard ERPNext DocTypes
+    {"dt": "Custom Field", "filters": [
+        ["dt", "in", [
+            "Employee",
+            "Customer",
+            "Sales Invoice",
+            "Child Attendance Log"
+        ]]
+    ]},
 ]
 
 # Website Route Rules

@@ -1,0 +1,149 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "RD-.YYYY.-.#####",
+ "creation": "2026-06-12 10:02:01.356172",
+ "custom": 1,
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "billing_section",
+  "late_fee_per_hour",
+  "billing_day_of_month",
+  "pickup_cutoff_time",
+  "tuition_item_code",
+  "grace_period_minutes",
+  "late_fee_section",
+  "max_children_per_teacher",
+  "admin_email",
+  "late_fee_item_code",
+  "late_pickup_minimum_fee",
+  "late_pickup_maximum_fee",
+  "absence_alert_time",
+  "require_cpr_for_teachers",
+  "max_child_age_months"
+ ],
+ "fields": [
+  {
+   "fieldname": "billing_section",
+   "fieldtype": "Section Break",
+   "label": "Billing"
+  },
+  {
+   "default": "200",
+   "fieldname": "late_fee_per_hour",
+   "fieldtype": "Currency",
+   "label": "Late Fee Per Hour"
+  },
+  {
+   "default": "1",
+   "description": "Day of month invoices are auto-generated (1-28)",
+   "fieldname": "billing_day_of_month",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Invoice Generation Day",
+   "reqd": 1
+  },
+  {
+   "default": "17:30:00",
+   "fieldname": "pickup_cutoff_time",
+   "fieldtype": "Time",
+   "label": "Pickup Cutoff Time"
+  },
+  {
+   "fieldname": "tuition_item_code",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Tuition Fee Item",
+   "options": "Item",
+   "reqd": 1
+  },
+  {
+   "default": "10",
+   "fieldname": "grace_period_minutes",
+   "fieldtype": "Int",
+   "label": "Grace Period (minutes)"
+  },
+  {
+   "fieldname": "late_fee_section",
+   "fieldtype": "Section Break",
+   "label": "Late Pickup Fees"
+  },
+  {
+   "default": "8",
+   "fieldname": "max_children_per_teacher",
+   "fieldtype": "Int",
+   "label": "Max Children Per Teacher"
+  },
+  {
+   "fieldname": "admin_email",
+   "fieldtype": "Data",
+   "label": "Admin Email"
+  },
+  {
+   "fieldname": "late_fee_item_code",
+   "fieldtype": "Link",
+   "label": "Late Fee Item",
+   "options": "Item"
+  },
+  {
+   "default": "0",
+   "fieldname": "late_pickup_minimum_fee",
+   "fieldtype": "Currency",
+   "label": "Minimum Late Fee (KES)"
+  },
+  {
+   "default": "2000",
+   "fieldname": "late_pickup_maximum_fee",
+   "fieldtype": "Currency",
+   "label": "Maximum Late Fee per Day (KES)"
+  },
+  {
+   "default": "09:30:00",
+   "description": "Alert guardian if no check-in by this time",
+   "fieldname": "absence_alert_time",
+   "fieldtype": "Time",
+   "label": "Absence Alert Time"
+  },
+  {
+   "default": "1",
+   "fieldname": "require_cpr_for_teachers",
+   "fieldtype": "Check",
+   "label": "Require CPR Certification for Teachers"
+  },
+  {
+   "default": "84",
+   "description": "Children older than this cannot be enrolled",
+   "fieldname": "max_child_age_months",
+   "fieldtype": "Int",
+   "label": "Maximum Child Age (months)"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-06-12 10:02:01.495624",
+ "modified_by": "Administrator",
+ "module": "Rhema Daycare",
+ "name": "Daycare Settings",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

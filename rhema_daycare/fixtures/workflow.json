@@ -1,67 +1,135 @@
 [
-  {
-    "doctype": "Workflow",
-    "name": "Child Enrollment Approval",
-    "workflow_name": "Child Enrollment Approval",
-    "document_type": "Child Profile",
-    "workflow_state_field": "workflow_state",
-    "is_active": 1,
-    "send_email_alert": 1,
-    "states": [
-      {
-        "doctype": "Workflow Document State",
-        "state": "Draft",
-        "doc_status": "0",
-        "allow_edit": "Teacher"
-      },
-      {
-        "doctype": "Workflow Document State",
-        "state": "Pending Approval",
-        "doc_status": "0",
-        "allow_edit": "Daycare Manager"
-      },
-      {
-        "doctype": "Workflow Document State",
-        "state": "Approved",
-        "doc_status": "0",
-        "allow_edit": "Daycare Manager"
-      },
-      {
-        "doctype": "Workflow Document State",
-        "state": "Rejected",
-        "doc_status": "0",
-        "allow_edit": "Daycare Manager"
-      }
-    ],
-    "transitions": [
-      {
-        "doctype": "Workflow Transition",
-        "state": "Draft",
-        "action": "Submit for Approval",
-        "next_state": "Pending Approval",
-        "allowed": "Teacher"
-      },
-      {
-        "doctype": "Workflow Transition",
-        "state": "Pending Approval",
-        "action": "Approve",
-        "next_state": "Approved",
-        "allowed": "Daycare Manager"
-      },
-      {
-        "doctype": "Workflow Transition",
-        "state": "Pending Approval",
-        "action": "Reject",
-        "next_state": "Rejected",
-        "allowed": "Daycare Manager"
-      },
-      {
-        "doctype": "Workflow Transition",
-        "state": "Rejected",
-        "action": "Resubmit",
-        "next_state": "Draft",
-        "allowed": "Teacher"
-      }
-    ]
-  }
+ {
+  "docstatus": 0,
+  "doctype": "Workflow",
+  "document_type": "Child Profile",
+  "is_active": 1,
+  "modified": "2026-05-21 13:53:42.076380",
+  "name": "Child Enrollment Approval",
+  "override_status": 0,
+  "send_email_alert": 1,
+  "states": [
+   {
+    "allow_edit": "Teacher",
+    "avoid_status_override": 0,
+    "doc_status": "0",
+    "is_optional_state": 0,
+    "message": null,
+    "next_action_email_template": null,
+    "parent": "Child Enrollment Approval",
+    "parentfield": "states",
+    "parenttype": "Workflow",
+    "send_email": 0,
+    "state": "Draft",
+    "update_field": null,
+    "update_value": null,
+    "workflow_builder_id": null
+   },
+   {
+    "allow_edit": "Daycare Manager",
+    "avoid_status_override": 0,
+    "doc_status": "0",
+    "is_optional_state": 0,
+    "message": null,
+    "next_action_email_template": null,
+    "parent": "Child Enrollment Approval",
+    "parentfield": "states",
+    "parenttype": "Workflow",
+    "send_email": 0,
+    "state": "Pending Approval",
+    "update_field": null,
+    "update_value": null,
+    "workflow_builder_id": null
+   },
+   {
+    "allow_edit": "Daycare Manager",
+    "avoid_status_override": 0,
+    "doc_status": "0",
+    "is_optional_state": 0,
+    "message": null,
+    "next_action_email_template": null,
+    "parent": "Child Enrollment Approval",
+    "parentfield": "states",
+    "parenttype": "Workflow",
+    "send_email": 0,
+    "state": "Approved",
+    "update_field": null,
+    "update_value": null,
+    "workflow_builder_id": null
+   },
+   {
+    "allow_edit": "Daycare Manager",
+    "avoid_status_override": 0,
+    "doc_status": "0",
+    "is_optional_state": 0,
+    "message": null,
+    "next_action_email_template": null,
+    "parent": "Child Enrollment Approval",
+    "parentfield": "states",
+    "parenttype": "Workflow",
+    "send_email": 0,
+    "state": "Rejected",
+    "update_field": null,
+    "update_value": null,
+    "workflow_builder_id": null
+   }
+  ],
+  "transitions": [
+   {
+    "action": "Submit for Approval",
+    "allow_self_approval": 0,
+    "allowed": "Teacher",
+    "condition": null,
+    "next_state": "Pending Approval",
+    "parent": "Child Enrollment Approval",
+    "parentfield": "transitions",
+    "parenttype": "Workflow",
+    "send_email_to_creator": 0,
+    "state": "Draft",
+    "workflow_builder_id": null
+   },
+   {
+    "action": "Approve",
+    "allow_self_approval": 0,
+    "allowed": "Daycare Manager",
+    "condition": null,
+    "next_state": "Approved",
+    "parent": "Child Enrollment Approval",
+    "parentfield": "transitions",
+    "parenttype": "Workflow",
+    "send_email_to_creator": 0,
+    "state": "Pending Approval",
+    "workflow_builder_id": null
+   },
+   {
+    "action": "Reject",
+    "allow_self_approval": 0,
+    "allowed": "Daycare Manager",
+    "condition": null,
+    "next_state": "Rejected",
+    "parent": "Child Enrollment Approval",
+    "parentfield": "transitions",
+    "parenttype": "Workflow",
+    "send_email_to_creator": 0,
+    "state": "Pending Approval",
+    "workflow_builder_id": null
+   },
+   {
+    "action": "Resubmit",
+    "allow_self_approval": 0,
+    "allowed": "Teacher",
+    "condition": null,
+    "next_state": "Draft",
+    "parent": "Child Enrollment Approval",
+    "parentfield": "transitions",
+    "parenttype": "Workflow",
+    "send_email_to_creator": 0,
+    "state": "Rejected",
+    "workflow_builder_id": null
+   }
+  ],
+  "workflow_data": null,
+  "workflow_name": "Child Enrollment Approval",
+  "workflow_state_field": "workflow_state"
+ }
 ]

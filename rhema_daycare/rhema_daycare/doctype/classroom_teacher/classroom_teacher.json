@@ -1,0 +1,65 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "RD-CT-.YYYY.-.#####",
+ "creation": "2026-06-12 10:02:02.267184",
+ "custom": 1,
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "teacher",
+  "teacher_name",
+  "role",
+  "phone_number",
+  "is_lead_teacher"
+ ],
+ "fields": [
+  {
+   "fieldname": "teacher",
+   "fieldtype": "Link",
+   "label": "Teacher",
+   "options": "Employee Training Record"
+  },
+  {
+   "fetch_from": "teacher.training_name",
+   "fieldname": "teacher_name",
+   "fieldtype": "Data",
+   "label": "Teacher Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "role",
+   "fieldtype": "Select",
+   "label": "Role",
+   "options": "Lead Teacher\nAssistant Teacher\nVolunteer\nStudent Teacher\nSpecial Needs Assistant"
+  },
+  {
+   "fieldname": "phone_number",
+   "fieldtype": "Data",
+   "label": "Phone Number"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_lead_teacher",
+   "fieldtype": "Check",
+   "label": "Is Lead Teacher"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-06-12 10:02:02.355212",
+ "modified_by": "Administrator",
+ "module": "Rhema Daycare",
+ "name": "Classroom Teacher",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

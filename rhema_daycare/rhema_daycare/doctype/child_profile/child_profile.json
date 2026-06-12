@@ -1,0 +1,169 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "RD-CHILD-.YYYY.-.#####",
+ "creation": "2026-06-12 10:02:01.555602",
+ "custom": 1,
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_oozg",
+  "photo",
+  "full_name",
+  "date_of_birth",
+  "gender",
+  "status",
+  "guardian",
+  "assigned_classroom",
+  "medical_conditions",
+  "allergies",
+  "immunization_records",
+  "emergency_contacts",
+  "attendance_logs",
+  "workflow_state"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_oozg",
+   "fieldtype": "Section Break",
+   "options": "Active\nInactive\nGraduated"
+  },
+  {
+   "fieldname": "photo",
+   "fieldtype": "Attach Image",
+   "label": "Photo"
+  },
+  {
+   "fieldname": "full_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Full Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "date_of_birth",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Date of Birth",
+   "reqd": 1
+  },
+  {
+   "fieldname": "gender",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Gender",
+   "options": "Male\nFemale\nOther",
+   "reqd": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Active\nInactive\nGraduated"
+  },
+  {
+   "fieldname": "guardian",
+   "fieldtype": "Link",
+   "label": "Parent/Guardian",
+   "options": "Customer"
+  },
+  {
+   "fieldname": "assigned_classroom",
+   "fieldtype": "Link",
+   "label": "Assigned Classroom",
+   "options": "Classroom"
+  },
+  {
+   "fieldname": "medical_conditions",
+   "fieldtype": "Small Text",
+   "label": "Medical Conditions"
+  },
+  {
+   "fieldname": "allergies",
+   "fieldtype": "Small Text",
+   "label": "Allergies"
+  },
+  {
+   "fieldname": "immunization_records",
+   "fieldtype": "Attach",
+   "label": "Immunization Records"
+  },
+  {
+   "fieldname": "emergency_contacts",
+   "fieldtype": "Table",
+   "label": "Emergency Contacts",
+   "options": "Emergency Contacts"
+  },
+  {
+   "fieldname": "attendance_logs",
+   "fieldtype": "Table",
+   "label": "Attendance Logs",
+   "options": "Child Attendance Log"
+  },
+  {
+   "fieldname": "workflow_state",
+   "fieldtype": "Select",
+   "label": "Workflow State",
+   "options": "Draft\nPending Approval\nApproval\nApproved\nRejected"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-06-12 10:02:01.730694",
+ "modified_by": "Administrator",
+ "module": "Rhema Daycare",
+ "name": "Child Profile",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Daycare Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Teacher",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "if_owner": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Parent Portal User",
+   "share": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
