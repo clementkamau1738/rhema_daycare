@@ -2,7 +2,7 @@
  "actions": [],
  "allow_rename": 1,
  "autoname": "RD-CAL-.YYYY.-.#####",
- "creation": "2026-06-12 10:02:02.105924",
+ "creation": "2026-06-12 15:28:40.601808",
  "custom": 1,
  "doctype": "DocType",
  "editable_grid": 1,
@@ -16,8 +16,7 @@
   "late_fee_charged",
   "late_fee_amount",
   "amended_from",
-  "amended_from",
-  "amended_from"
+  "data_dgoi"
  ],
  "fields": [
   {
@@ -75,31 +74,15 @@
    "search_index": 1
   },
   {
-   "fieldname": "amended_from",
-   "fieldtype": "Link",
-   "label": "Amended From",
-   "no_copy": 1,
-   "options": "Child Attendance Log",
-   "print_hide": 1,
-   "read_only": 1,
-   "search_index": 1
-  },
-  {
-   "fieldname": "amended_from",
-   "fieldtype": "Link",
-   "label": "Amended From",
-   "no_copy": 1,
-   "options": "Child Attendance Log",
-   "print_hide": 1,
-   "read_only": 1,
-   "search_index": 1
+   "fieldname": "data_dgoi",
+   "fieldtype": "Data"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-06-12 10:02:02.227674",
+ "modified": "2026-06-15 10:07:58.791567",
  "modified_by": "Administrator",
  "module": "Rhema Daycare",
  "name": "Child Attendance Log",
@@ -115,6 +98,17 @@
    "read": 1,
    "report": 1,
    "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Teacher",
    "share": 1,
    "write": 1
   }
