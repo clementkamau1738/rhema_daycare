@@ -16,21 +16,32 @@ def install_custom_fields():
 
 
 def _setup_sales_invoice_fields():
-    if not frappe.db.exists("Custom Field", "Sales Invoice-rhema_child"):
-        frappe.get_doc({
-            "doctype":     "Custom Field",
-            "dt":          "Sales Invoice",
-            "fieldname":   "rhema_child",
-            "fieldtype":   "Link",
-            "options":     "Child Profile",
-            "label":       "Child",
-            "read_only":   1,
-            "search_index": 1,
-            "insert_after": "customer"
-        }).insert(ignore_permissions=True)
+    existing = {
+        f.fieldname
+        for f in frappe.get_doc("DocType", "Sales Invoice").fields
+    }
+    if "rhema_child" in existing:
+        return
+    if frappe.db.exists("Custom Field", "Sales Invoice-rhema_child"):
+        return
+    frappe.get_doc({
+        "doctype":      "Custom Field",
+        "dt":           "Sales Invoice",
+        "fieldname":    "rhema_child",
+        "fieldtype":    "Link",
+        "options":      "Child Profile",
+        "label":        "Child",
+        "read_only":    1,
+        "search_index": 1,
+        "insert_after": "customer"
+    }).insert(ignore_permissions=True)
 
 
 def _setup_employee_fields():
+    existing = {
+        f.fieldname
+        for f in frappe.get_doc("DocType", "Employee").fields
+    }
     fields = [
         {
             "fieldname":   "rhema_section",
@@ -79,16 +90,23 @@ def _setup_employee_fields():
         },
     ]
     for f in fields:
+        if f["fieldname"] in existing:
+            continue
         name = f"Employee-{f['fieldname']}"
-        if not frappe.db.exists("Custom Field", name):
-            frappe.get_doc({
-                "doctype": "Custom Field",
-                "dt":      "Employee",
-                **f
-            }).insert(ignore_permissions=True)
+        if frappe.db.exists("Custom Field", name):
+            continue
+        frappe.get_doc({
+            "doctype": "Custom Field",
+            "dt":      "Employee",
+            **f
+        }).insert(ignore_permissions=True)
 
 
 def _setup_customer_fields():
+    existing = {
+        f.fieldname
+        for f in frappe.get_doc("DocType", "Customer").fields
+    }
     fields = [
         {
             "fieldname":   "portal_section",
@@ -127,16 +145,25 @@ def _setup_customer_fields():
         },
     ]
     for f in fields:
+        if f["fieldname"] in existing:
+            continue
         name = f"Customer-{f['fieldname']}"
-        if not frappe.db.exists("Custom Field", name):
-            frappe.get_doc({
-                "doctype": "Custom Field",
-                "dt":      "Customer",
-                **f
-            }).insert(ignore_permissions=True)
+        if frappe.db.exists("Custom Field", name):
+            continue
+        frappe.get_doc({
+            "doctype": "Custom Field",
+            "dt":      "Customer",
+            **f
+        }).insert(ignore_permissions=True)
 
 
 def _setup_attendance_log_fields():
+    # Get fieldnames already on the DocType (built-in or previously added)
+    existing = {
+        f.fieldname
+        for f in frappe.get_doc("DocType", "Child Attendance Log").fields
+    }
+
     fields = [
         {
             "fieldname":   "checked_in_by",
@@ -172,13 +199,17 @@ def _setup_attendance_log_fields():
         },
     ]
     for f in fields:
+        # Skip if already on the DocType OR already a Custom Field
+        if f["fieldname"] in existing:
+            continue
         name = f"Child Attendance Log-{f['fieldname']}"
-        if not frappe.db.exists("Custom Field", name):
-            frappe.get_doc({
-                "doctype": "Custom Field",
-                "dt":      "Child Attendance Log",
-                **f
-            }).insert(ignore_permissions=True)
+        if frappe.db.exists("Custom Field", name):
+            continue
+        frappe.get_doc({
+            "doctype": "Custom Field",
+            "dt":      "Child Attendance Log",
+            **f
+        }).insert(ignore_permissions=True)
 
 
 def _ensure_attendance_index():
