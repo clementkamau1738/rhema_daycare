@@ -1,90 +1,64 @@
 app_name = "rhema_daycare"
 app_title = "Rhema Daycare"
 app_publisher = "clement"
-app_description = "Rhema Daycare is ideal for daycare centers, preschools, and early learning institutes looking for a modern, cloud-ready solution that keeps parents informed and staff organized—all in one place."
+app_description = "Rhema Daycare management system"
 app_email = "remytheeog@gmail.com"
 app_license = "mit"
 
-# After Migrate
-after_migrate = [
-    "rhema_daycare.rhema_daycare.setup.add_custom_fields",
-    "rhema_daycare.rhema_daycare.setup.setup_kenya_defaults"
-]
+after_migrate = ["rhema_daycare.setup.install_custom_fields"]
 
-# Document Events
 doc_events = {
     "Child Attendance Log": {
-        "on_update": "rhema_daycare.rhema_daycare.alerts.check_late_pickup"
-    }
+        "on_update": "rhema_daycare.attendance.alerts.evaluate_late_pickup"
+    },
+    "Classroom": {
+        "before_delete": "rhema_daycare.doctypes.classroom.classroom.before_delete_classroom"
+    },
+    "Child Profile": {
+        "on_trash": "rhema_daycare.doctypes.child_profile.child_profile.on_trash_child"
+    },
+    "Sales Invoice": {
+        "on_submit": "rhema_daycare.billing.invoicing.on_invoice_submit"
+    },
+    "Salary Slip": {
+        "validate": "rhema_daycare.hr.payroll.validate_payslip"
+    },
 }
 
-# Scheduled Tasks
 scheduler_events = {
     "monthly": [
-        "rhema_daycare.rhema_daycare.billing.generate_monthly_invoices"
+        "rhema_daycare.billing.invoicing.generate_monthly_invoices"
     ],
     "daily": [
-        "rhema_daycare.rhema_daycare.billing.send_payment_reminders",
-        "rhema_daycare.rhema_daycare.attendance.send_daily_summary"
+        "rhema_daycare.billing.invoicing.send_payment_reminders",
+        "rhema_daycare.billing.invoicing.calculate_late_pickup_fees",
+        "rhema_daycare.billing.invoicing.check_missing_children"
     ],
     "hourly": [
-        "rhema_daycare.rhema_daycare.billing.calculate_late_pickup_fees"
+        "rhema_daycare.attendance.alerts.check_active_late_pickups"
     ]
 }
 
-# Fixtures
-# hooks.py
 fixtures = [
-    # Export ALL your custom DocType definitions
-    {"dt": "DocType", "filters": [
-        ["module", "=", "Rhema Daycare"]
-    ]},
-
-    # Export roles
-    {"dt": "Role", "filters": [
-        ["role_name", "in", [
-            "Daycare Manager",
-            "Teacher",
-            "Parent Portal User"
-        ]]
-    ]},
-
-    # Export salary components
-    {"dt": "Salary Component", "filters": [
-        ["name", "in", [
-            "Basic Salary",
-            "Transport Allowance",
-            "Meal Allowance",
-            "PAYE",
-            "NHIF",
-            "NSSF"
-        ]]
-    ]},
-
-    # Export the enrollment workflow
-    {"dt": "Workflow", "filters": [
-        ["document_type", "=", "Child Profile"]
-    ]},
-
-    # Export custom fields added to standard ERPNext DocTypes
-    {"dt": "Custom Field", "filters": [
-        ["dt", "in", [
-            "Employee",
-            "Customer",
-            "Sales Invoice",
-            "Child Attendance Log"
-        ]]
-    ]},
+    {"dt": "DocType", "filters": [["module", "=", "Rhema Daycare"]]},
+    {"dt": "Role", "filters": [["role_name", "in", [
+        "Daycare Manager", "Teacher", "Parent Portal User"
+    ]]]},
+    {"dt": "Salary Component", "filters": [["name", "in", [
+        "Basic Salary", "Transport Allowance", "Meal Allowance",
+        "PAYE", "NHIF", "NSSF"
+    ]]]},
+    {"dt": "Workflow", "filters": [["document_type", "=", "Child Profile"]]},
+    {"dt": "Custom Field", "filters": [["dt", "in", [
+        "Employee", "Customer", "Sales Invoice", "Child Attendance Log"
+    ]]]},
 ]
 
-# Website Route Rules
 website_route_rules = [
-    {"from_route": "/parent-portal", "to_route": "parent_portal"},
-    {"from_route": "/child/<name>", "to_route": "child_profile"},
-    {"from_route": "/qr-scanner", "to_route": "qr_scanner"}
+    {"from_route": "/parent-portal",      "to_route": "parent_portal"},
+    {"from_route": "/child/<child_name>", "to_route": "child_detail"}
 ]
 
-# Website Permissions
 has_website_permission = {
-    "Child Profile": "rhema_daycare.rhema_daycare.portal.has_website_permission"
+    "Child Profile": "rhema_daycare.portal.permissions.has_website_permission"
 }
