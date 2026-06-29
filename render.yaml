@@ -1,28 +1,27 @@
 services:
-  # Main Frappe Web App Service
+  # 1. Main Web Service
   - type: web
     name: rhema-daycare-web
     env: docker
-    dockerfilePath: ./Dockerfile
-    plan: starter # Free tier might lack RAM requirements for building assets
+    plan: starter
     envVars:
       - key: DB_HOST
         fromDatabase:
-          name: frappe-db
+          name: rhema-db
           property: host
       - key: REDIS_CACHE_URL
         fromService:
-          type: pvt
+          type: redis
           name: redis-cache
-          property: host
+          property: connectionString
 
-  # Private Redis Cache Service
-  - type: pvt
+  # 2. Private Redis Service (Fixed Type)
+  - type: redis
     name: redis-cache
-    env: redis
     plan: free
+    ipAllowList: [] # Crucial: Blocks public traffic, keeping it private
 
-# Database Instance Required by Frappe
+# 3. Database Backend Instance
 databases:
-  - name: frappe-db
+  - name: rhema-db
     plan: free
