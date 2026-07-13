@@ -19,6 +19,8 @@ class TestWorkflowPrivilegeEscalation(unittest.TestCase):
         self.guardian = self._get_or_create_guardian("Test Guardian - PrivEsc")
         self.teacher_user = self._get_or_create_user(
             "privesc-teacher@example.com", "PrivEsc", "Teacher", ["Teacher"])
+        self.manager_user = self._get_or_create_user(
+            "privesc-manager@example.com", "PrivEsc", "Manager", ["Daycare Manager"])
 
     def tearDown(self):
         frappe.set_user("Administrator")
@@ -97,6 +99,21 @@ class TestWorkflowPrivilegeEscalation(unittest.TestCase):
         child = self._get_or_create_draft_child("PrivEsc Legit Test Child")
 
         frappe.set_user(self.teacher_user.name)
+        doc = frappe.get_doc("Child Profile", child.name)
+        doc = apply_workflow(doc, "Submit for Approval")
+        self.assertEqual(doc.workflow_state, "Pending Approval")
+        frappe.db.commit()
+
+    def test_manager_can_also_submit_for_approval(self):
+        # Gap fix regression: the manual's own state table lists "Teacher,
+        # Manager" as allowed for Draft -> Pending Approval, but the
+        # transition originally only granted it to Teacher. A Daycare
+        # Manager's only path to move a Draft record forward was Force
+        # Approve, which skips review and leaves a permanent bypass-audit
+        # entry — a disproportionate tool for a routine action.
+        child = self._get_or_create_draft_child("PrivEsc Manager Submit Test Child")
+
+        frappe.set_user(self.manager_user.name)
         doc = frappe.get_doc("Child Profile", child.name)
         doc = apply_workflow(doc, "Submit for Approval")
         self.assertEqual(doc.workflow_state, "Pending Approval")
