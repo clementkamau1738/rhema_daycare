@@ -1,0 +1,15 @@
+{
+    "doctype": "Report",
+    "name": "Child Attendance Summary",
+    "report_name": "Child Attendance Summary",
+    "report_type": "Script Report",
+    "ref_doctype": "Child Attendance Log",
+    "is_standard": "Yes",
+    "module": "Rhema Daycare",
+    "filters": [
+        {"fieldname": "from_date", "label": "From Date", "fieldtype": "Date", "default": "Today"},
+        {"fieldname": "to_date", "label": "To Date", "fieldtype": "Date", "default": "Today"},
+        {"fieldname": "classroom", "label": "Classroom", "fieldtype": "Link", "options": "Classroom"}
+    ],
+    "roles": [{"role": "Daycare Manager"}, {"role": "Teacher"}, {"role": "System Manager"}]
+}
