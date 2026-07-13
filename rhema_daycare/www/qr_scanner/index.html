@@ -21,7 +21,7 @@
   <!-- Scanner -->
   <div class="card mb-4">
     <div class="card-header bg-dark text-white">
-      <h5 class="mb-0">📸 Camera Scanner</h5>
+      <h5 class="mb-0">Camera Scanner</h5>
     </div>
     <div class="card-body text-center">
       <div id="reader" style="width:100%; max-width:500px; margin:auto;"></div>
@@ -39,7 +39,7 @@
   <!-- Manual Entry -->
   <div class="card mb-4">
     <div class="card-header">
-      <h5 class="mb-0">✏️ Manual Check-in</h5>
+      <h5 class="mb-0">Manual Check-in</h5>
     </div>
     <div class="card-body">
       <div class="form-group">
@@ -92,7 +92,7 @@
   <!-- Simulate Late Pickup -->
   <div class="card mb-4 border-warning">
     <div class="card-header bg-warning">
-      <h5 class="mb-0">⚠️ Simulate Late Pickup Alert</h5>
+      <h5 class="mb-0">Simulate Late Pickup Alert</h5>
     </div>
     <div class="card-body">
       <p class="text-muted">
@@ -103,7 +103,7 @@
              class="form-control mb-2"
              placeholder="Child ID to simulate">
       <button class="btn btn-warning" onclick="simulateLatePickup()">
-        🔔 Simulate Late Pickup Alert
+        Simulate Late Pickup Alert
       </button>
     </div>
   </div>
@@ -175,7 +175,7 @@ function manualCheckin() {
   const childId = document.getElementById("manual-child-id").value.trim();
   const action = document.getElementById("manual-action").value;
   if (!childId) {
-    showStatus("⚠️ Please enter a Child ID.", "warning");
+    showStatus(" Please enter a Child ID.", "warning");
     return;
   }
   processCheckin(childId, action);
@@ -205,9 +205,9 @@ function processCheckin(childId, action) {
 
         showResult({
           child: data.child,
-          action: isCheckin ? "✅ Checked In" : "🏠 Checked Out",
+          action: isCheckin ? "✅ Checked In" : " Checked Out",
           time: isCheckin ? data.check_in : data.check_out,
-          log: data.log_id || "—",
+          log: data.log || "—",
           success: true
         });
 
@@ -230,11 +230,11 @@ function processCheckin(childId, action) {
 function simulateLatePickup() {
   const childId = document.getElementById("sim-child-id").value.trim();
   if (!childId) {
-    showStatus("⚠️ Please enter a Child ID to simulate.", "warning");
+    showStatus(" Please enter a Child ID to simulate.", "warning");
     return;
   }
 
-  showStatus("⏳ Simulating late pickup alert...", "info");
+  showStatus(" Simulating late pickup alert...", "info");
 
   frappe.call({
     method: "rhema_daycare.api.attendance.simulate_late_pickup",
@@ -242,7 +242,7 @@ function simulateLatePickup() {
     callback: function(r) {
       if (r.message && r.message.status === "success") {
         showStatus(
-          "🔔 Late pickup alert sent! Guardian has been notified. " +
+          "Late pickup alert sent! Guardian has been notified. " +
           "Late fee: KES " + r.message.estimated_fee,
           "warning"
         );

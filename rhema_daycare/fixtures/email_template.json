@@ -1,0 +1,58 @@
+[
+ {
+  "doctype": "Email Template",
+  "name": "Rhema: Check-in Alert",
+  "subject": "{{ child_name }} has arrived at Rhema Daycare",
+  "response": "<p>Check-in recorded at {{ checkin_time }}.</p>",
+  "use_html": 0
+ },
+ {
+  "doctype": "Email Template",
+  "name": "Rhema: Check-out Alert",
+  "subject": "{{ child_name }} has been picked up",
+  "response": "<p>Check-out recorded at {{ checkout_time }}. Have a great evening!</p>",
+  "use_html": 0
+ },
+ {
+  "doctype": "Email Template",
+  "name": "Rhema: Late Pickup Alert",
+  "subject": "Late pickup alert — {{ child_name }}",
+  "response": "<p><strong>{{ child_name }}</strong> is still at Rhema Daycare — {{ minutes_late }} minutes past the pickup cutoff.</p>{% if fee %}<p>Late fee: <strong>KES {{ fee }}</strong>.</p>{% endif %}<p>— Rhema Daycare team</p>",
+  "use_html": 0
+ },
+ {
+  "doctype": "Email Template",
+  "name": "Rhema: Absence Alert",
+  "subject": "Absence alert — {{ child_name }} has not checked in",
+  "response": "<p><strong>{{ child_name }}</strong> has not checked in at Rhema Daycare by the expected time.</p><p>If this is a planned absence, no action is needed. If unexpected, please contact us immediately.</p><p>— Rhema Daycare team</p>",
+  "use_html": 0
+ },
+ {
+  "doctype": "Email Template",
+  "name": "Rhema: Enrollment Approved",
+  "subject": "{{ child_name }}'s enrollment has been approved",
+  "response": "<p>Good news — <strong>{{ child_name }}</strong>'s enrollment at Rhema Daycare has been approved. They are now available for check-in and billing.</p><p>— Rhema Daycare team</p>",
+  "use_html": 0
+ },
+ {
+  "doctype": "Email Template",
+  "name": "Rhema: Invoice Generated",
+  "subject": "Invoice {{ invoice_number }} generated",
+  "response": "<p>A new invoice <strong>{{ invoice_number }}</strong> for <strong>KES {{ outstanding_amount }}</strong> has been generated.</p><p>Due date: {{ due_date }}</p><p>Please pay via your parent portal.</p><p>— Rhema Daycare team</p>",
+  "use_html": 0
+ },
+ {
+  "doctype": "Email Template",
+  "name": "Rhema: Payment Reminder",
+  "subject": "Payment reminder — Invoice {{ invoice_number }}",
+  "response": "<p>Invoice <strong>{{ invoice_number }}</strong> for <strong>KES {{ outstanding_amount }}</strong> is overdue.</p><p>Due date: {{ due_date }}</p><p>Please pay via your parent portal.</p><p>— Rhema Daycare team</p>",
+  "use_html": 0
+ },
+ {
+  "doctype": "Email Template",
+  "name": "Rhema: Admin Alert",
+  "subject": "[Rhema Daycare] {{ subject }}",
+  "response": "<p>{{ message }}</p>",
+  "use_html": 0
+ }
+]

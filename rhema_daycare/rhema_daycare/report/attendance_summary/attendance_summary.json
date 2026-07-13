@@ -1,21 +1,10 @@
 {
-  "doctype": "Report",
-  "name": "Attendance Summary",
-  "report_name": "Attendance Summary",
-  "report_type": "Script Report",
-  "ref_doctype": "Child Attendance Log",
-  "is_standard": "Yes",
-  "module": "Rhema Daycare",
-  "roles": [
-    {
-      "role": "Daycare Manager"
-    },
-    {
-      "role": "Teacher"
-    },
-    {
-      "role": "System Manager"
-    }
-  ],
-  "report_script": "def execute(filters=None):\n    if not filters:\n        filters = {}\n    if not filters.get('from_date'):\n        filters['from_date'] = frappe.utils.today()\n    if not filters.get('to_date'):\n        filters['to_date'] = frappe.utils.today()\n    columns = [\n        {'label': 'Date', 'fieldname': 'date', 'fieldtype': 'Date', 'width': 120},\n        {'label': 'Child Name', 'fieldname': 'child_name', 'fieldtype': 'Data', 'width': 160},\n        {'label': 'Classroom', 'fieldname': 'classroom', 'fieldtype': 'Data', 'width': 140},\n        {'label': 'Check In', 'fieldname': 'check_in', 'fieldtype': 'Datetime', 'width': 160},\n        {'label': 'Check Out', 'fieldname': 'check_out', 'fieldtype': 'Datetime', 'width': 160},\n        {'label': 'Status', 'fieldname': 'status', 'fieldtype': 'Data', 'width': 100}\n    ]\n    data = frappe.db.sql(\n        'SELECT DATE(cal.check_in) as date, cp.full_name as child_name,'\n        ' cp.assigned_classroom as classroom, cal.check_in, cal.check_out, cal.status'\n        ' FROM `tabChild Attendance Log` cal'\n        ' LEFT JOIN `tabChild Profile` cp ON cal.child = cp.name'\n        ' WHERE DATE(cal.check_in) BETWEEN %(from_date)s AND %(to_date)s'\n        ' ORDER BY cal.check_in DESC',\n        filters, as_dict=True)\n    return columns, data\n"
+    "doctype": "Report",
+    "name": "Attendance Summary",
+    "report_name": "Attendance Summary",
+    "report_type": "Script Report",
+    "ref_doctype": "Child Attendance Log",
+    "is_standard": "Yes",
+    "module": "Rhema Daycare",
+    "roles": [{"role": "Daycare Manager"}, {"role": "Teacher"}, {"role": "System Manager"}]
 }

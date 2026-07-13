@@ -27,19 +27,93 @@
     </div>
   </div>
 
+  <!-- Today's daily report: meals, naps, teacher notes -->
+  <div class="card mb-3">
+    <div class="card-body">
+      <h5 class="card-title">Today's activities</h5>
+
+      <h6 class="mt-3">Meals</h6>
+      {% if meals_today %}
+        {% for meal in meals_today %}
+        <p class="mb-1">{{ meal.meal_type }} — {{ meal.food_items }}
+          {% if meal.amount_eaten %}(ate: {{ meal.amount_eaten }}){% endif %}</p>
+        {% endfor %}
+      {% else %}
+        <p class="text-muted">No meals logged yet today</p>
+      {% endif %}
+
+      <h6 class="mt-3">Naps</h6>
+      {% if naps_today %}
+        {% for nap in naps_today %}
+        <p class="mb-1">{{ nap.nap_start }} – {{ nap.nap_end or "ongoing" }}</p>
+        {% endfor %}
+      {% else %}
+        <p class="text-muted">No naps logged yet today</p>
+      {% endif %}
+
+      <h6 class="mt-3">Teacher notes</h6>
+      {% if teacher_notes_today %}
+        {% for note in teacher_notes_today %}
+        <p class="mb-1">{{ note.note }}</p>
+        {% endfor %}
+      {% else %}
+        <p class="text-muted">No notes yet today</p>
+      {% endif %}
+    </div>
+  </div>
+
   <!-- Outstanding invoices -->
   {% if invoices %}
   <div class="card mb-3">
     <div class="card-body">
       <h5 class="card-title">Outstanding invoices</h5>
       {% for inv in invoices %}
-      <div class="d-flex justify-content-between mb-2">
+      <div class="d-flex justify-content-between align-items-center mb-2">
         <span>{{ inv.name }} · Due {{ inv.due_date }}</span>
-        <strong>KES {{ inv.outstanding_amount }}</strong>
+        <div>
+          <strong class="mr-2">KES {{ inv.outstanding_amount }}</strong>
+          <button class="btn btn-sm btn-success pay-now-btn" data-invoice="{{ inv.name }}">
+            Pay now
+          </button>
+        </div>
       </div>
       {% endfor %}
     </div>
   </div>
   {% endif %}
+
+  <div class="mb-4">
+    <a href="/api/method/rhema_daycare.portal.statements.download_statement?year={{ frappe.utils.nowdate()[:4] }}"
+       class="btn btn-sm btn-outline-secondary">
+      Download this year's statement (PDF)
+    </a>
+  </div>
 </div>
+
+<script>
+document.querySelectorAll(".pay-now-btn").forEach(function (btn) {
+  btn.addEventListener("click", function () {
+    var invoice = btn.getAttribute("data-invoice");
+    var phone = prompt("Enter the M-Pesa phone number to pay from (e.g. 0712345678):");
+    if (!phone) return;
+    btn.disabled = true;
+    btn.innerText = "Sending prompt...";
+    frappe.call({
+      method: "rhema_daycare.portal.payments.initiate_payment",
+      args: { invoice_name: invoice, phone: phone },
+      callback: function (r) {
+        btn.disabled = false;
+        btn.innerText = "Pay now";
+        if (r.message) {
+          alert(r.message.message);
+        }
+      },
+      error: function () {
+        btn.disabled = false;
+        btn.innerText = "Pay now";
+      }
+    });
+  });
+});
+</script>
 {% endblock %}

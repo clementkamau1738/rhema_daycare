@@ -3,7 +3,7 @@
  "allow_rename": 1,
  "autoname": "RD-CAL-.YYYY.-.#####",
  "creation": "2026-06-12 15:28:40.601808",
- "custom": 1,
+ "custom": 0,
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
@@ -15,8 +15,7 @@
   "notes",
   "late_fee_charged",
   "late_fee_amount",
-  "amended_from",
-  "data_dgoi"
+  "amended_from"
  ],
  "fields": [
   {
@@ -28,6 +27,7 @@
    "reqd": 1
   },
   {
+   "default": "Now",
    "fieldname": "check_in",
    "fieldtype": "Datetime",
    "in_list_view": 1,
@@ -40,6 +40,7 @@
    "label": "Check Out"
   },
   {
+   "default": "Present",
    "fieldname": "status",
    "fieldtype": "Select",
    "in_list_view": 1,
@@ -72,10 +73,6 @@
    "print_hide": 1,
    "read_only": 1,
    "search_index": 1
-  },
-  {
-   "fieldname": "data_dgoi",
-   "fieldtype": "Data"
   }
  ],
  "grid_page_length": 50,
@@ -109,6 +106,17 @@
    "read": 1,
    "report": 1,
    "role": "Teacher",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Daycare Manager",
    "share": 1,
    "write": 1
   }

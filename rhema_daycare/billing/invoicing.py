@@ -4,23 +4,11 @@ from frappe.utils import (
     today, get_first_day, get_last_day,
     add_days, now_datetime, get_time
 )
+from rhema_daycare.notifications import hub
 
 
 def _settings():
     return frappe.get_cached_doc("Daycare Settings")
-
-
-def _send_admin_alert(subject, message):
-    try:
-        email = _settings().get("admin_email") or ""
-        if not email:
-            frappe.log_error("Admin email not configured.", "Admin Alert Skipped")
-            return
-        frappe.sendmail(recipients=[email],
-            subject=f"[Rhema Daycare] {subject}",
-            message=message, now=True)
-    except Exception as e:
-        frappe.log_error(str(e), "Admin Alert Failed")
 
 
 def generate_monthly_invoices():
@@ -33,7 +21,7 @@ def generate_monthly_invoices():
     settings = _settings()
     tuition_item = settings.get("tuition_item_code")
     if not tuition_item:
-        _send_admin_alert("Invoice generation failed",
+        hub.send_admin_alert("Invoice generation failed",
             "Daycare Settings missing Tuition Fee Item.")
         return
 
@@ -75,7 +63,7 @@ def generate_monthly_invoices():
         f"Created: {created} | Skipped: {len(skipped)} | Errors: {len(errors)}")
     if errors:
         detail = "\n".join(f"  {e['child']}: {e['error']}" for e in errors)
-        _send_admin_alert("Invoice errors", f"{summary}\n\n{detail}")
+        hub.send_admin_alert("Invoice errors", f"{summary}\n\n{detail}")
     else:
         frappe.log_error(summary, "Invoice Run Summary")
 
@@ -95,6 +83,17 @@ def _create_invoice(child, period_start, period_end,
         frappe.log_error(
             f"Skipped {child['name']}: no monthly_fee on classroom.", "Invoice Skip")
         return "skipped"
+
+    # Lock this child's row before the duplicate-invoice check, same pattern
+    # as child_profile.py's capacity check and api/attendance.py's check-in
+    # guard — a plain frappe.db.exists() here is a check-then-act race: two
+    # concurrent runs (a manual re-run overlapping the cron, or a retried
+    # background job) could both pass the exists() check before either
+    # insert lands, producing a real duplicate invoice. FOR UPDATE closes
+    # that window for any caller that goes through this same child lock.
+    frappe.db.sql(
+        "SELECT name FROM `tabChild Profile` WHERE name = %s FOR UPDATE",
+        (child["name"],))
 
     existing = frappe.db.exists("Sales Invoice", {
         "customer": child["guardian"],
@@ -120,6 +119,7 @@ def _create_invoice(child, period_start, period_end,
     invoice.flags.ignore_permissions = False
     invoice.insert()
     invoice.submit()
+    hub.send_invoice_generated(invoice, child["guardian"])
     return "created"
 
 
@@ -136,29 +136,10 @@ def send_payment_reminders():
 
     for inv in overdue:
         try:
-            _send_payment_reminder(inv)
+            hub.send_payment_reminder(inv, inv["customer"])
         except Exception as e:
             frappe.log_error(f"Reminder failed for {inv['name']}: {e}",
                 "Payment Reminder Error")
-
-
-def _send_payment_reminder(inv):
-    customer = frappe.db.get_value("Customer", inv["customer"],
-        ["customer_name", "email_id"], as_dict=True)
-    if not customer or not customer.get("email_id"):
-        frappe.log_error(
-            f"No email for {inv['customer']} — reminder skipped.",
-            "Reminder: Missing Email")
-        return
-    frappe.sendmail(
-        recipients=[customer["email_id"]],
-        subject=f"Payment reminder — Invoice {inv['name']}",
-        message=(f"Hi {customer['customer_name']},<br><br>"
-            f"Invoice <strong>{inv['name']}</strong> for "
-            f"<strong>KES {float(inv['outstanding_amount']):,.0f}</strong> is overdue.<br>"
-            f"Due date: {inv['due_date']}<br><br>"
-            f"Please pay via your parent portal.<br><br>"
-            f"— Rhema Daycare team"))
 
 
 def calculate_late_pickup_fees():
@@ -218,12 +199,12 @@ def _apply_late_fee(log, cutoff, settings, late_fee_item, company):
     invoice.insert()
     invoice.submit()
     frappe.db.set_value("Child Attendance Log", log["name"], "late_fee_charged", 1)
-    _notify_late_pickup(child, hours_late, fee)
+    hub.send_late_pickup_alert(child, hours_late * 60, fee=fee)
 
 
 def _calculate_fee(hours_late, settings):
-    grace = float(settings.get("late_pickup_grace_minutes") or 0) / 60
-    rate = float(settings.get("late_pickup_fee_per_hour") or 200)
+    grace = float(settings.get("grace_period_minutes") or 0) / 60
+    rate = float(settings.get("late_fee_per_hour") or 200)
     minimum = float(settings.get("late_pickup_minimum_fee") or 0)
     maximum = float(settings.get("late_pickup_maximum_fee") or 9999)
     billable = max(0.0, hours_late - grace)
@@ -232,23 +213,14 @@ def _calculate_fee(hours_late, settings):
     return max(minimum, min(round(billable * rate, 2), maximum))
 
 
-def _notify_late_pickup(child, hours_late, fee):
-    try:
-        email = frappe.db.get_value("Customer", child["guardian"], "email_id")
-        if not email:
-            return
-        frappe.sendmail(recipients=[email],
-            subject=f"Late pickup alert — {child['full_name']}",
-            message=(f"<strong>{child['full_name']}</strong> is still at Rhema Daycare — "
-                f"{hours_late * 60:.0f} mins past cutoff.<br>"
-                f"Late fee: <strong>KES {fee:,.0f}</strong>.<br><br>"
-                f"— Rhema Daycare team"),
-            now=True)
-    except Exception as e:
-        frappe.log_error(str(e), "Late Pickup Notification Error")
-
-
 def check_missing_children():
+    # Runs hourly (see hooks.py) rather than as a single fixed daily cron
+    # entry, because Daycare Settings.absence_alert_time is meant to be
+    # freely configurable — a single fixed-time cron would silently never
+    # fire again that day if a Manager set the configured time later than
+    # the cron's own fixed hour. Running hourly and self-gating below means
+    # any configured time is still caught the same day, at the next hourly
+    # tick after it passes.
     settings = _settings()
     alert_time = get_time(settings.get("absence_alert_time") or "09:30:00")
     if get_time(now_datetime()) < alert_time:
@@ -266,27 +238,20 @@ def check_missing_children():
     }
 
     for child in active:
-        if child["name"] not in checked_in:
-            try:
-                _notify_absence(child)
-            except Exception as e:
-                frappe.log_error(
-                    f"Absence alert failed for {child['name']}: {e}",
-                    "Absence Alert Error")
-
-
-def _notify_absence(child):
-    if not child.get("guardian"):
-        return
-    email = frappe.db.get_value("Customer", child["guardian"], "email_id")
-    if not email:
-        return
-    frappe.sendmail(recipients=[email],
-        subject=f"Absence alert — {child['full_name']} has not checked in",
-        message=(f"<strong>{child['full_name']}</strong> has not checked in "
-            f"at Rhema Daycare by the expected time.<br><br>"
-            f"If planned absence, no action needed. Otherwise please contact us.<br><br>"
-            f"— Rhema Daycare team"))
+        if child["name"] in checked_in:
+            continue
+        # Per-child-per-day dedup so the hourly run doesn't resend the same
+        # alert every hour for a child who stays absent all day.
+        sent_key = f"rhema_absence_alert_sent_{child['name']}_{today()}"
+        if frappe.cache().get_value(sent_key):
+            continue
+        try:
+            hub.send_absence_alert(child)
+            frappe.cache().set_value(sent_key, 1, expires_in_sec=86400)
+        except Exception as e:
+            frappe.log_error(
+                f"Absence alert failed for {child['name']}: {e}",
+                "Absence Alert Error")
 
 
 def on_invoice_submit(doc, method):

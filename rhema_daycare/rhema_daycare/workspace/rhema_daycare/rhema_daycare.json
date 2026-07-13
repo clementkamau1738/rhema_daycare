@@ -1,0 +1,115 @@
+{
+ "charts": [],
+ "content": "[{\"id\": \"PJFrJreiaa\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\">Rhema Daycare</span>\", \"col\": 12}}, {\"id\": \"aa2846c7b0\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Child Profile\", \"col\": 4}}, {\"id\": \"49147aac76\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Classroom\", \"col\": 4}}, {\"id\": \"66dd80e937\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Child Attendance Log\", \"col\": 4}}, {\"id\": \"1c03d54c29\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Meal Record\", \"col\": 4}}, {\"id\": \"8375bddc60\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Nap Record\", \"col\": 4}}, {\"id\": \"0439b17510\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Teacher Note\", \"col\": 4}}, {\"id\": \"a30d19351d\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Rhema Daycare Settings\", \"col\": 4}}, {\"id\": \"c71161d0f2\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Rhema Notification Log\", \"col\": 4}}, {\"id\": \"fb4d771958\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"QR Scanner\", \"col\": 4}}, {\"id\": \"14951c8038\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Parent Portal\", \"col\": 4}}, {\"id\": \"855d4f98ba\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Enrollment Trends\", \"col\": 4}}, {\"id\": \"f497c8674a\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Attendance Summary\", \"col\": 4}}, {\"id\": \"788711d5bc\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Classroom Utilisation\", \"col\": 4}}, {\"id\": \"5f244d2abf\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Daily Attendance Summary\", \"col\": 4}}]",
+ "creation": "2026-04-28 12:46:01.266688",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "hide_custom": 0,
+ "icon": "baby",
+ "idx": 0,
+ "indicator_color": "green",
+ "is_hidden": 0,
+ "label": "Rhema Daycare",
+ "links": [],
+ "modified": "2026-07-13 10:10:00.123509",
+ "modified_by": "Administrator",
+ "module": "Rhema Daycare",
+ "name": "Rhema Daycare",
+ "number_cards": [],
+ "owner": "Administrator",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [],
+ "sequence_id": 0.0,
+ "shortcuts": [
+  {
+   "label": "Attendance Summary",
+   "link_to": "Attendance Summary",
+   "report_ref_doctype": "Child Attendance Log",
+   "type": "Report"
+  },
+  {
+   "doc_view": "",
+   "label": "Rhema Daycare Settings",
+   "link_to": "Daycare Settings",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "Child Profile",
+   "link_to": "Child Profile",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "Child Attendance Log",
+   "link_to": "Child Attendance Log",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "QR Scanner",
+   "type": "URL",
+   "url": "/qr-scanner"
+  },
+  {
+   "doc_view": "",
+   "label": "Parent Portal",
+   "type": "URL",
+   "url": "/parent-portal"
+  },
+  {
+   "doc_view": "",
+   "label": "Enrollment Trends",
+   "link_to": "Enrollment Trends",
+   "report_ref_doctype": "Child Profile",
+   "type": "Report"
+  },
+  {
+   "doc_view": "",
+   "label": "Meal Record",
+   "link_to": "Meal Record",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "Classroom",
+   "link_to": "Classroom",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "Nap Record",
+   "link_to": "Nap Record",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "Teacher Note",
+   "link_to": "Teacher Note",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "Rhema Notification Log",
+   "link_to": "Rhema Notification Log",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "Classroom Utilisation",
+   "link_to": "Classroom Utilisation",
+   "report_ref_doctype": "Classroom",
+   "type": "Report"
+  },
+  {
+   "doc_view": "",
+   "label": "Daily Attendance Summary",
+   "link_to": "Daily Attendance Summary",
+   "report_ref_doctype": "Child Attendance Log",
+   "type": "Report"
+  }
+ ],
+ "title": "Rhema Daycare"
+}

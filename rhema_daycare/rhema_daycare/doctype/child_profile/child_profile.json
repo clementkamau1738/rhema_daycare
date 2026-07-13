@@ -2,8 +2,8 @@
  "actions": [],
  "allow_rename": 1,
  "autoname": "RD-CHILD-.YYYY.-.#####",
- "creation": "2026-06-12 10:02:01.555602",
- "custom": 1,
+ "creation": "2026-06-24 11:16:13.382846",
+ "custom": 0,
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
@@ -14,6 +14,7 @@
   "gender",
   "status",
   "guardian",
+  "additional_guardians",
   "assigned_classroom",
   "medical_conditions",
   "allergies",
@@ -59,13 +60,19 @@
    "fieldname": "status",
    "fieldtype": "Select",
    "label": "Status",
-   "options": "Active\nInactive\nGraduated"
+   "options": "\nActive\nInactive\nGraduated"
   },
   {
    "fieldname": "guardian",
    "fieldtype": "Link",
    "label": "Parent/Guardian",
    "options": "Customer"
+  },
+  {
+   "fieldname": "additional_guardians",
+   "fieldtype": "Table",
+   "label": "Additional Guardians (portal read-only)",
+   "options": "Additional Guardian"
   },
   {
    "fieldname": "assigned_classroom",
@@ -101,16 +108,19 @@
    "options": "Child Attendance Log"
   },
   {
+   "default": "Draft",
    "fieldname": "workflow_state",
    "fieldtype": "Select",
    "label": "Workflow State",
-   "options": "Draft\nPending Approval\nApproval\nApproved\nRejected"
+   "options": "Draft\nPending Approval\nApproved\nRejected",
+   "read_only": 1,
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-06-12 10:02:01.730694",
+ "modified": "2026-06-24 11:16:13.711325",
  "modified_by": "Administrator",
  "module": "Rhema Daycare",
  "name": "Child Profile",
@@ -141,6 +151,7 @@
    "write": 1
   },
   {
+   "create": 1,
    "email": 1,
    "export": 1,
    "print": 1,
@@ -165,5 +176,6 @@
  "rows_threshold_for_grid_search": 20,
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "track_changes": 1
 }

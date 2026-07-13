@@ -1,0 +1,19 @@
+[
+ {
+  "doctype": "Print Format",
+  "name": "Child ID Card",
+  "doc_type": "Child Profile",
+  "module": "Rhema Daycare",
+  "standard": "Yes",
+  "custom_format": 1,
+  "print_format_type": "Jinja",
+  "disabled": 0,
+  "font_size": 12,
+  "margin_top": 8,
+  "margin_bottom": 8,
+  "margin_left": 8,
+  "margin_right": 8,
+  "css": ".id-card { width: 340px; border: 2px solid #2490ef; border-radius: 10px; padding: 14px; font-family: sans-serif; } .id-card h2 { margin: 0 0 2px 0; font-size: 16px; } .id-card .sub { color: #888; font-size: 11px; margin-bottom: 10px; } .id-card .photo { width: 70px; height: 70px; object-fit: cover; border-radius: 6px; float: left; margin-right: 10px; border: 1px solid #ddd; } .id-card .qr { display: block; margin: 10px auto 0 auto; width: 130px; }",
+  "html": "<div class=\"id-card\">\n  {% if doc.photo %}<img class=\"photo\" src=\"{{ doc.photo }}\">{% endif %}\n  <h2>{{ doc.full_name }}</h2>\n  <div class=\"sub\">Rhema Daycare — Child ID Card</div>\n  <div>Classroom: <strong>{{ doc.assigned_classroom or \"—\" }}</strong></div>\n  <div>Child ID: <strong>{{ doc.name }}</strong></div>\n  <div style=\"clear: both;\"></div>\n  <img class=\"qr\" src=\"{{ get_child_id_qr_data_uri(doc.name) }}\">\n  <div style=\"text-align:center; font-size:10px; color:#999;\">Scan at gate check-in / check-out</div>\n</div>\n"
+ }
+]

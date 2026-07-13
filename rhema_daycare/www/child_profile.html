@@ -20,17 +20,12 @@
         </div>
         <div class="col-md-6">
           <p><strong>Classroom:</strong> {{ child.assigned_classroom or "Not Assigned" }}</p>
-          <p><strong>Guardian:</strong> {{ child.guardian }}</p>
-          <p><strong>Workflow State:</strong> {{ child.workflow_state }}</p>
         </div>
       </div>
-      {% if child.medical_conditions %}
-      <hr>
-      <p><strong>Medical Conditions:</strong> {{ child.medical_conditions }}</p>
-      {% endif %}
-      {% if child.allergies %}
-      <p><strong>Allergies:</strong> {{ child.allergies }}</p>
-      {% endif %}
+      <!-- Medical fields (allergies, medical_conditions, immunization_records)
+           are intentionally never fetched for this page — sensitive health
+           data is staff-only under Kenya's Data Protection Act 2019
+           (see Module 7 of the training manual). -->
     </div>
   </div>
 

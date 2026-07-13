@@ -1,0 +1,10 @@
+{
+    "doctype": "Report",
+    "name": "Daily Attendance Summary",
+    "report_name": "Daily Attendance Summary",
+    "report_type": "Script Report",
+    "ref_doctype": "Child Attendance Log",
+    "is_standard": "Yes",
+    "module": "Rhema Daycare",
+    "roles": [{"role": "Daycare Manager"}, {"role": "Teacher"}, {"role": "System Manager"}]
+}

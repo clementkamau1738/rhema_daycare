@@ -3,7 +3,7 @@
  "allow_rename": 1,
  "autoname": "RD-.YYYY.-.#####",
  "creation": "2026-06-12 10:02:01.356172",
- "custom": 1,
+ "custom": 0,
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
@@ -21,7 +21,15 @@
   "late_pickup_maximum_fee",
   "absence_alert_time",
   "require_cpr_for_teachers",
-  "max_child_age_months"
+  "max_child_age_months",
+  "mpesa_section",
+  "mpesa_environment",
+  "mpesa_shortcode",
+  "mpesa_column_break",
+  "mpesa_consumer_key",
+  "mpesa_consumer_secret",
+  "mpesa_passkey",
+  "mpesa_callback_secret"
  ],
  "fields": [
   {
@@ -117,6 +125,49 @@
    "fieldname": "max_child_age_months",
    "fieldtype": "Int",
    "label": "Maximum Child Age (months)"
+  },
+  {
+   "fieldname": "mpesa_section",
+   "fieldtype": "Section Break",
+   "label": "M-Pesa (Daraja API)"
+  },
+  {
+   "default": "Sandbox",
+   "fieldname": "mpesa_environment",
+   "fieldtype": "Select",
+   "label": "Environment",
+   "options": "Sandbox\nProduction"
+  },
+  {
+   "fieldname": "mpesa_shortcode",
+   "fieldtype": "Data",
+   "label": "Business Shortcode"
+  },
+  {
+   "fieldname": "mpesa_column_break",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "mpesa_consumer_key",
+   "fieldtype": "Data",
+   "label": "Consumer Key"
+  },
+  {
+   "fieldname": "mpesa_consumer_secret",
+   "fieldtype": "Password",
+   "label": "Consumer Secret"
+  },
+  {
+   "fieldname": "mpesa_passkey",
+   "fieldtype": "Password",
+   "label": "Passkey"
+  },
+  {
+   "description": "Auto-generated on first STK push if left blank. Embedded in the callback URL and checked on every inbound M-Pesa callback, since Safaricom does not sign its callback payloads.",
+   "fieldname": "mpesa_callback_secret",
+   "fieldtype": "Password",
+   "label": "Callback Secret",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
@@ -137,6 +188,14 @@
    "print": 1,
    "read": 1,
    "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "Daycare Manager",
    "share": 1,
    "write": 1
   }

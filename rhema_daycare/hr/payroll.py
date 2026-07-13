@@ -67,6 +67,68 @@ def calculate_nssf(monthly_gross: float) -> float:
     return round(tier_i + tier_ii, 2)
 
 
+def calculate_housing_levy(monthly_gross: float) -> float:
+    """Affordable Housing Levy — employee share, 1.5% of gross salary.
+    Matches the rate documented on the 'Housing Levy' Salary Component
+    fixture (fixtures/salary_component.json); no ceiling/floor is applied."""
+    return round(float(monthly_gross) * 0.015, 2)
+
+
+STATUTORY_DEDUCTION_CALCULATORS = {
+    "PAYE":         monthly_paye,
+    "NHIF":         calculate_nhif,
+    "NSSF":         calculate_nssf,
+    "Housing Levy": calculate_housing_levy,
+}
+
+
+def apply_statutory_deductions(doc, method):
+    """Doc event on Salary Slip 'validate' — the actual wiring for Kenya's
+    statutory deductions.
+
+    The manual's documented approach (a Salary Structure Deduction row with
+    formula "rhema_daycare.hr.payroll.monthly_paye(gross_pay)") cannot work
+    under any deployment: HRMS's formula sandbox (_safe_eval's
+    whitelisted_globals in salary_slip.py) only exposes a fixed builtin set
+    (int/float/round/date/getdate/ceil/floor) with no module-import or
+    dotted-attribute access, so rhema_daycare.* is never reachable from a
+    formula — confirmed live via NameError: name 'rhema_daycare' is not
+    defined.
+
+    This hook is the real fix: it runs after SalarySlip.validate() has
+    already called calculate_net_pay() (same point validate_payslip below
+    already runs at, and registered before it in hooks.py so its corrected
+    totals are what validate_payslip's sanity checks see), overwrites the
+    amount on any deduction row whose Salary Component matches one of the
+    four statutory components with the value computed from this slip's own
+    gross pay, then asks the slip to re-sum its own totals. set_net_pay() is
+    a plain re-sum of the already-populated deduction table — unlike
+    calculate_net_pay(), it does not re-derive rows from the Salary
+    Structure template, so the override survives.
+
+    Rows are only updated if the Salary Structure already includes that
+    component (matched by name) — a structure that deliberately omits one
+    (e.g. a component below an exemption threshold) is left alone rather
+    than having a row force-injected.
+    """
+    if not doc.get("deductions"):
+        return
+
+    changed = False
+    for row in doc.deductions:
+        calculator = STATUTORY_DEDUCTION_CALCULATORS.get(row.salary_component)
+        if not calculator:
+            continue
+        correct_amount = flt(calculator(flt(doc.gross_pay)), row.precision("amount"))
+        if flt(row.amount, row.precision("amount")) != correct_amount:
+            row.amount = correct_amount
+            row.default_amount = correct_amount
+            changed = True
+
+    if changed:
+        doc.set_net_pay()
+
+
 def validate_payslip(doc, method):
     """Frappe doc event on Salary Slip. Blocks negative net and deductions > gross."""
     gross      = flt(doc.gross_pay)

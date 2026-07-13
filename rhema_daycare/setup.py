@@ -12,7 +12,35 @@ def install_custom_fields():
     _setup_attendance_log_fields()
     _ensure_attendance_index()
     _ensure_invoice_index()
+    _setup_role_permissions()
     frappe.db.commit()
+
+
+def _setup_role_permissions():
+    """
+    Grant 'Daycare Manager' access to the standard ERPNext/HRMS doctypes the
+    manual describes as "Full access" for that role, via Custom DocPerm
+    (the app doesn't own these doctypes, so their own JSON can't be edited).
+    Safe to run multiple times.
+    """
+    from frappe.permissions import add_permission, update_permission_property
+
+    grants = {
+        "Sales Invoice": ["read", "write", "create", "submit", "cancel", "print", "email"],
+        "Payroll Entry": ["read", "write", "create", "submit", "cancel"],
+        "Salary Slip": ["read", "write", "create", "submit", "cancel", "print", "email"],
+        "Salary Structure Assignment": ["read", "write", "create", "submit", "cancel"],
+    }
+    for doctype, ptypes in grants.items():
+        already_exists = frappe.db.get_value(
+            "Custom DocPerm",
+            {"parent": doctype, "role": "Daycare Manager", "permlevel": 0, "if_owner": 0},
+        )
+        if already_exists:
+            continue
+        add_permission(doctype, "Daycare Manager", permlevel=0, ptype=ptypes[0])
+        for ptype in ptypes[1:]:
+            update_permission_property(doctype, "Daycare Manager", 0, ptype, value=1)
 
 
 def _setup_sales_invoice_fields():
@@ -130,11 +158,18 @@ def _setup_customer_fields():
             "insert_after": "portal_access_enabled"
         },
         {
+            "fieldname":   "guardian_mobile_no",
+            "fieldtype":   "Data",
+            "options":     "Phone",
+            "label":       "Guardian Mobile No (for SMS)",
+            "insert_after": "communication_preference"
+        },
+        {
             "fieldname":   "relationship_to_child",
             "fieldtype":   "Select",
             "label":       "Relationship to Child",
             "options":     "\nMother\nFather\nGrandparent\nGuardian\nOther",
-            "insert_after": "communication_preference"
+            "insert_after": "guardian_mobile_no"
         },
         {
             "fieldname":   "authorized_pickup_persons",
@@ -213,14 +248,16 @@ def _setup_attendance_log_fields():
 
 
 def _ensure_attendance_index():
-    frappe.db.sql("""
+    # sql_ddl commits first, then runs — CREATE INDEX autocommits in MariaDB
+    # and would otherwise trip frappe's implicit-commit guard mid-transaction.
+    frappe.db.sql_ddl("""
         CREATE INDEX IF NOT EXISTS idx_att_child_checkin
         ON `tabChild Attendance Log` (child, check_in)
     """)
 
 
 def _ensure_invoice_index():
-    frappe.db.sql("""
+    frappe.db.sql_ddl("""
         CREATE INDEX IF NOT EXISTS idx_inv_rhema_child_date
         ON `tabSales Invoice` (rhema_child, posting_date)
     """)

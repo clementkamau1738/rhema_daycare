@@ -25,5 +25,5 @@ def execute(filters=None):
         WHERE creation BETWEEN %(from_date)s AND %(to_date)s
         GROUP BY month
         ORDER BY month DESC
-    """, {**filters, "fmt": "%%Y-%%m"}, as_dict=True)
+    """, {**filters, "fmt": "%Y-%m"}, as_dict=True)
     return columns, data
