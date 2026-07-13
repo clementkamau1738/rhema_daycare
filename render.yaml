@@ -1,0 +1,27 @@
+services:
+  # 1. Main Web Service
+  - type: web
+    name: rhema-daycare-web
+    env: docker
+    plan: starter
+    envVars:
+      - key: DB_HOST
+        fromDatabase:
+          name: rhema-db
+          property: host
+      - key: REDIS_CACHE_URL
+        fromService:
+          type: redis
+          name: redis-cache
+          property: connectionString
+
+  # 2. Private Redis Service (Fixed Type)
+  - type: redis
+    name: redis-cache
+    plan: free
+    ipAllowList: [] # Crucial: Blocks public traffic, keeping it private
+
+# 3. Database Backend Instance
+databases:
+  - name: rhema-db
+    plan: free
