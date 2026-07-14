@@ -13,10 +13,13 @@ def _settings():
 
 def generate_monthly_invoices():
     lock_key = f"rhema_invoice_lock_{today()[:7]}"
-    if frappe.cache().get(lock_key):
+    # SET ... NX EX is a single atomic Redis command, unlike the previous
+    # separate GET-then-SET — two near-simultaneous invocations (scheduler
+    # double-fire, manual re-trigger racing the cron) can no longer both
+    # pass the check before either one's lock lands.
+    if not frappe.cache().set(lock_key, 1, ex=7200, nx=True):
         frappe.log_error("Invoice generation already ran this month.", "Billing Lock")
         return
-    frappe.cache().set(lock_key, 1, ex=7200)
 
     settings = _settings()
     tuition_item = settings.get("tuition_item_code")
@@ -172,6 +175,20 @@ def calculate_late_pickup_fees():
 
 def _apply_late_fee(log, cutoff, settings, late_fee_item, company):
     from frappe.utils import time_diff_in_hours, get_datetime
+
+    # Lock this attendance log row and re-check late_fee_charged as part of
+    # the locking query itself (not a separate plain read afterward) —
+    # same check-then-insert race as the tuition invoice fix above.
+    # calculate_late_pickup_fees runs hourly; a slow run (mail sending
+    # inside the loop) still in flight when the next tick fires could
+    # otherwise both see late_fee_charged=0 and both submit an invoice for
+    # the same late pickup.
+    current = frappe.db.sql(
+        "SELECT late_fee_charged FROM `tabChild Attendance Log` WHERE name = %s FOR UPDATE",
+        (log["name"],), as_dict=True)
+    if not current or current[0].late_fee_charged:
+        return
+
     now = now_datetime()
     cutoff_dt = get_datetime(str(today()) + " " + str(cutoff))
     hours_late = time_diff_in_hours(now, cutoff_dt)

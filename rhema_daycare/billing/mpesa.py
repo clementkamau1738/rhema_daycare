@@ -189,6 +189,23 @@ def mpesa_callback():
             message=f"M-Pesa callback for unknown CheckoutRequestID {checkout_request_id}")
         return {"ResultDesc": "Accepted"}
 
+    # Lock the Integration Request row and read its status as part of the
+    # locking query itself (not a separate plain read afterward), so this
+    # sees the latest committed status rather than a pre-lock snapshot —
+    # same REPEATABLE-READ pitfall found and fixed for Classroom capacity.
+    # This closes both a forged replay and a legitimate Safaricom callback
+    # redelivery: either would otherwise create a second Payment Entry
+    # against an invoice already marked paid.
+    locked = frappe.db.sql(
+        "SELECT status FROM `tabIntegration Request` WHERE name = %s FOR UPDATE",
+        (integration_request_name,), as_dict=True)
+    if locked and locked[0].status == "Completed":
+        frappe.log_error(
+            title="M-Pesa Callback: Duplicate",
+            message=(f"Ignored a replayed/duplicate callback for CheckoutRequestID "
+                     f"{checkout_request_id} — already processed."))
+        return {"ResultDesc": "Accepted"}
+
     integration_request = frappe.get_doc("Integration Request", integration_request_name)
     integration_request.db_set("output", frappe.as_json(payload))
 
@@ -236,6 +253,7 @@ def _create_payment_entry(invoice_name, amount, mpesa_receipt):
     invoice = frappe.get_doc("Sales Invoice", invoice_name)
     payment = frappe.new_doc("Payment Entry")
     payment.payment_type = "Receive"
+    payment.company = invoice.company
     payment.party_type = "Customer"
     payment.party = invoice.customer
     payment.paid_amount = amount
