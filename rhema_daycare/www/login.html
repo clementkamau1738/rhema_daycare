@@ -1,0 +1,357 @@
+{% extends "templates/web.html" %}
+
+{# Shared logo section used by the forgot password and signup modals #}
+{% macro logo_section(title=null) %}
+<div class="page-card-head">
+    <img class="app-logo" src="/assets/rhema_daycare/images/login_logo.png" style="height: 100px;">
+    {% if title %}
+    <h4>{{ _(title)}}</h4>
+    {% else %}
+    <h4>{{ _('Login to {0}').format(app_name or _("Frappe")) }}</h4>
+    {% endif %}
+</div>
+{% endmacro %}
+
+
+{# Main login form body #}
+{% macro email_login_body() -%}
+<div class="page-card-body">
+    <h3 class="form-title text-center mb-4">SIGN IN</h3>
+
+    <div class="form-group mb-3">
+        <label class="form-label" for="login_email">Username or email address</label>
+        <div class="email-field input-narrow-field">
+            <input type="text" id="login_email" class="form-control" placeholder="Enter your username or email" required
+                autofocus autocomplete="username">
+        </div>
+    </div>
+
+    <div class="form-group mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <label class="form-label" for="login_password" style="margin-bottom: 0;">Password</label>
+            <a href="#forgot" class="text-link small">Forgot Password?</a>
+        </div>
+        <div class="password-field input-narrow-field mt-2">
+            <input type="password" id="login_password" class="form-control" placeholder="Enter your password"
+                autocomplete="current-password" required>
+        </div>
+    </div>
+
+    <div class="form-group mt-4">
+        <button class="btn btn-primary btn-block btn-login" type="submit">
+            {{ _("Sign in") }}</button>
+    </div>
+
+    {% if not disable_signup %}
+    <div class="text-center mt-4">
+        <span class="text-muted">{{ _("Don't have an account?") }}</span> <a href="#signup" class="text-link">{{
+            _("Register") }}</a>
+    </div>
+    {% endif %}
+</div>
+{% endmacro %}
+
+
+{% block head_include %}
+{{ include_style('login.bundle.css') }}
+<style>
+    :root {
+        --brand-accent: #2A6F77;
+        --brand-accent-dark: #20565c;
+    }
+
+    body {
+        background-color: #FFFFFF;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    .for-login .login-container {
+        display: flex;
+        min-height: 100vh;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .for-login .login-split-view {
+        display: flex;
+        width: 100%;
+        max-width: 1200px;
+        align-items: center;
+    }
+
+    .for-login .login-left-panel,
+    .for-login .login-right-panel {
+        flex: 1;
+        padding: 3rem;
+    }
+
+    .for-login .login-left-panel {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .for-login .login-right-panel {
+        display: flex;
+        justify-content: center;
+    }
+
+    .for-login .logo-container {
+        margin-bottom: 2.5rem;
+        background-color: #FFFFFF;
+        padding: 1rem;
+        display: inline-block;
+    }
+
+    .for-login .logo-container img {
+        height: 220px;
+        width: auto;
+    }
+
+    .for-login .welcome-text {
+        font-size: 1.5rem;
+        color: #6c757d;
+        font-weight: 400;
+        line-height: 1.5;
+    }
+
+    .for-login .welcome-text .brand-name {
+        display: block;
+        font-size: 2.8rem;
+        color: var(--brand-accent);
+        font-weight: 700;
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .for-login .welcome-text .portal-name {
+        display: block;
+        font-size: 1.5rem;
+        color: #212529;
+        font-weight: 400;
+    }
+
+    .for-login .login-form-container {
+        background: #FFFFFF;
+        border: 1px solid #e9ecef;
+        border-radius: 1rem;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+        width: 100%;
+        max-width: 420px;
+        padding: 3rem;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .for-login .login-content,
+    .for-login .page-card-body {
+        padding: 0;
+        width: 100%;
+    }
+
+    .form-control {
+        border-radius: 0.5rem;
+        padding: 0.9rem;
+        border: 1px solid #ced4da;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .form-control:focus {
+        border-color: var(--brand-accent);
+        box-shadow: 0 0 0 3px rgba(42, 111, 119, 0.15);
+        outline: none;
+    }
+
+    .btn-login.btn-primary {
+        background-color: var(--brand-accent);
+        border: none;
+        color: white;
+        padding: 0.9rem;
+        border-radius: 0.5rem;
+        font-weight: bold;
+        text-transform: uppercase;
+        transition: background-color 0.2s ease-in-out;
+        width: 100%;
+    }
+
+    .btn-login.btn-primary:hover {
+        background-color: var(--brand-accent-dark);
+        color: white;
+    }
+
+    .btn-login.btn-primary:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(42, 111, 119, 0.3);
+    }
+
+    .for-login .page-card-head {
+        display: none;
+    }
+
+    .for-forgot .page-card-head,
+    .for-signup .page-card-head {
+        display: block;
+    }
+
+    .for-forgot .btn-primary,
+    .for-login-with-email-link .btn-primary {
+        background-color: var(--brand-accent);
+        border-color: var(--brand-accent);
+        transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+    }
+
+    .for-forgot .btn-primary:hover,
+    .for-login-with-email-link .btn-primary:hover {
+        background-color: var(--brand-accent-dark);
+        border-color: var(--brand-accent-dark);
+    }
+
+    .for-forgot .btn-primary:focus,
+    .for-login-with-email-link .btn-primary:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(42, 111, 119, 0.3);
+    }
+
+    .input-narrow-field {
+        width: 90%;
+        max-width: 350px;
+        margin-left: auto;
+        margin-right: auto;
+        box-sizing: border-box;
+    }
+
+    .form-group {
+        width: 100%;
+    }
+
+    .form-group .form-label {
+        display: block;
+        width: 90%;
+        max-width: 350px;
+        margin-left: auto;
+        margin-right: auto;
+        text-align: left;
+        white-space: normal;
+        overflow: visible;
+    }
+
+    .form-group .d-flex {
+        width: 90%;
+        max-width: 350px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    @media (max-width: 992px) {
+        .for-login .login-split-view {
+            flex-direction: column;
+        }
+
+        .for-login .login-left-panel {
+            text-align: center;
+        }
+    }
+</style>
+{% endblock %}
+
+
+{% block page_content %}
+
+<section class='for-login'>
+    <div class="login-container">
+        <div class="login-split-view">
+            <div class="login-left-panel">
+                <div class="logo-container">
+                    <img src="/assets/rhema_daycare/images/login_logo.png" alt="{{ app_name }}">
+                </div>
+
+                <p class="welcome-text">
+                    Welcome to
+                    <span class="brand-name">{{ app_name }}</span>
+                </p>
+            </div>
+
+            <div class="login-right-panel">
+                <div class="login-form-container">
+                    <div class="login-content page-card">
+                        <form class="form-signin form-login" role="form">
+                            {{ email_login_body() }}
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class='for-signup {{ "signup-disabled" if disable_signup else "" }}'>
+    {{ logo_section(_('Create a {0} Account').format(app_name or _("Frappe"))) }}
+    <div class="login-content page-card">
+        {%- if not disable_signup -%}
+        {{ signup_form_template }}
+        {%- else -%}
+        <div class='page-card-head mb-2'>
+            <span class='indicator gray'>{{_("Signup Disabled")}}</span>
+            <p class="text-muted text-normal sign-up-message mt-1 mb-8">{{_("Signups have been disabled for this
+                website.")}}</p>
+            <div><a href='/' class='btn btn-primary btn-md'>{{ _("Home") }}</a></div>
+        </div>
+        {%- endif -%}
+    </div>
+</section>
+
+<section class='for-forgot'>
+    {{ logo_section('Forgot Password') }}
+    <div class="login-content page-card">
+        <form class="form-signin form-forgot hide" role="form">
+            <div class="page-card-body">
+                <div class="email-field">
+                    <input type="email" id="forgot_email" class="form-control" placeholder="{{ _('Email Address') }}"
+                        required autofocus autocomplete="username">
+                </div>
+            </div>
+            <div class="page-card-actions">
+                <button class="btn btn-sm btn-primary btn-block btn-forgot" type="submit">{{ _("Reset Password")
+                    }}</button>
+                <p class="text-center sign-up-message">
+                    <a href="#login">{{ _("Back to Login") }}</a>
+                </p>
+            </div>
+        </form>
+    </div>
+</section>
+
+<section class='for-login-with-email-link'>
+    {{ logo_section(_('Login with Email Link')) }}
+    <div class="login-content page-card">
+        <form class="form-signin form-login-with-email-link hide" role="form">
+            <div class="page-card-body">
+                <div class="email-field">
+                    <input type="email" id="login_with_email_link_email" class="form-control"
+                        placeholder="{{ _('Email Address') }}" required autofocus autocomplete="username">
+                </div>
+            </div>
+            <div class="page-card-actions">
+                <button class="btn btn-sm btn-primary btn-block btn-login-with-email-link" type="submit">{{ _("Send
+                    login link") }}</button>
+                <p class="text-center sign-up-message">
+                    <a href="#login">{{ _("Back to Login") }}</a>
+                </p>
+            </div>
+        </form>
+    </div>
+</section>
+
+{% endblock %}
+
+
+{% block script %}
+<script>{% include "templates/includes/login/login.js" %}</script>
+{% endblock %}
+
+{% block sidebar %}{% endblock %}

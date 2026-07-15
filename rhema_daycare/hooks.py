@@ -5,6 +5,8 @@ app_description = "Rhema Daycare management system"
 app_email = "remytheeog@gmail.com"
 app_license = "mit"
 
+app_include_css = "/assets/rhema_daycare/css/newara.css"
+
 after_migrate = ["rhema_daycare.setup.install_custom_fields"]
 
 doc_events = {
@@ -84,6 +86,8 @@ website_route_rules = [
 has_website_permission = {
     "Child Profile": "rhema_daycare.portal.permissions.has_website_permission"
 }
+
+signup_form_template = "rhema_daycare/templates/pages/custom_signup.html"
 
 jinja = {
     "methods": [
